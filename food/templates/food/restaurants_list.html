@@ -1,0 +1,589 @@
+{%extends 'food/base.html'%}
+
+{%block title%}
+24X7 Restaurants
+{%endblock%}
+
+{%block body%}
+    {% if restaurants_list %}
+
+     <div  class="container" id="food">
+         		 {%if messages%}
+
+        {%for message in messages%}
+    <div align="center" class="alert alert-success">
+        <strong>{{message}}</strong>
+    </div>
+        {%endfor%}
+    {%endif%}
+
+         <div class="well well-md row">
+
+
+
+
+
+
+             <div class="col-sm-6">
+         <h1 id="head1" align="center"><b><u>Some Popular Food Destinations</u></b></h1>
+                 </div>
+             <div class="col-sm-6">
+
+          <form class="example"  autocomplete="off" method="post" action="/food/restaurants">
+        {%csrf_token%}
+     <div class="autocomplete" style="width:100%;">
+      <input id="search" type="text" value="{{page}}" name="search" placeholder="Search..restaurant name or location">
+         <button class="btn btn-lg btn-info" value="q">Search</button>
+     </div>
+
+
+    </form>
+             </div>
+
+
+             </div>
+
+         <div  class="w3-row-padding w3-padding-16 w3-center">
+     <script>
+            var i =0;
+             var countries = new Array(80);
+     </script>
+     {% for rest in all_list %}
+
+       <script>
+            countries[i] = "{{rest.name}}";
+
+              i = i+1;
+        </script>
+
+
+     {%endfor%}
+
+        {% for restaurant in restaurants_list%}
+
+            <div class="w3-quarter">
+        <a href="restaurants/{{restaurant.id}}"> <img id="rest-img" src="{{restaurant.logo.url}} " alt="Sandwich" ></a>
+        <a href="restaurants/{{restaurant.id}}"><h2>{{restaurant.name}}</h2></a>
+
+
+
+      <p>{{restaurant.address}} </p>
+        {%if restaurant.rating == 5%}
+
+        <p>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+
+        </p>
+
+        {% elif restaurant.rating == 4 %}
+         <p>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+
+         </p>
+
+           {% elif restaurant.rating == 3 %}
+
+        <p>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+        </p>
+
+
+        {% elif restaurant.rating == 2 %}
+            <p>
+                <span  class=" red glyphicon glyphicon-heart"></span>
+                <span  class=" red glyphicon glyphicon-heart"></span>
+            </p>
+
+        {% elif restaurant.rating == 1 %}
+        <p>
+        <span class="red glyphicon glyphicon-heart"></span>
+        </p>
+
+        {%endif%}
+            </div>
+
+        {%endfor%}
+ </div>
+         <script>
+             document.write(list[i]);
+         </script>
+
+
+
+
+<div class="w3-center w3-padding-6">
+
+    <span class="step-links">
+        {% if restaurants_list.has_previous %}
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page=1">&laquo; first</a>
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{ contacts.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            <b>Page {{ restaurants_list.number }} of {{ restaurants_list.paginator.num_pages }}.</b>
+        </span>
+
+        {% if restaurants_list.has_next %}
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{ restaurants_list.next_page_number }}">next</a>
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{ restaurants_list.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+
+    {%else%}
+    <div class="conatiner-fluid" style="margin-top:120px">
+            <br>
+         <h2 id="head1" align="center"><b><u>Some Popular Food Destinations</u></b></h2><br>
+
+        <div class="jumbotron">
+    <h1 align="center">No food Destinations found. </h1>
+            <h2 align="center"> please <u><b><a href="{%url 'food:restaurants_list'%}">Try again</a></b></u> with different Keywords</h2>
+            <br> <br> <br> <br> <br>
+            </div>
+        </div>
+
+    {%endif%}
+
+
+
+
+
+
+
+
+
+
+
+{% if request.user.is_authenticated %}
+
+
+ {% if mine_restaurant_list %}
+         <br><br>
+
+         <div class="well well-md row"  >
+            <div class="col-sm-5">
+         <h1 id="head1" align="center"><b><u>Food Destinations Near you</u></b></h1>
+            </div>
+             <div class="col-sm-7">
+          <form class="example"  method="post" action="/food/restaurants/my">
+        {%csrf_token%}
+      <input id="search" type="text" value="{{page}}" name="search" placeholder="Search..restaurants near you">
+          <button class="btn btn-lg btn-info" value="q"><span class="glyphicon glyphicon-search"></span></button>
+    </form>
+             </div>
+         </div>
+
+           <div  class="w3-row-padding w3-padding-16 w3-center">
+
+        {% for restaurant1 in mine_restaurant_list%}
+    <div class="w3-quarter">
+        <a href="restaurants/{{restaurant1.id}}"> <img id="rest-img" src="{{restaurant1.logo.url}} " alt="Sandwich"  ></a>
+        <a href="restaurants/{{restaurant1.id}}"><h2>{{restaurant1.name}}</h2></a>
+
+      <p>{{restaurant1.address}} </p>
+        {%if restaurant1.rating == 5%}
+
+        <p>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+
+        </p>
+
+        {% elif restaurant1.rating == 4 %}
+         <p>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+
+         </p>
+
+           {% elif restaurant1.rating == 3 %}
+
+        <p>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+        </p>
+
+
+        {% elif restaurant1.rating == 2 %}
+            <p>
+                <span  class=" red glyphicon glyphicon-heart"></span>
+                <span  class=" red glyphicon glyphicon-heart"></span>
+            </p>
+
+        {% elif restaurant1.rating == 1 %}
+        <p>
+        <span class="red glyphicon glyphicon-heart"></span>
+        </p>
+
+        {%endif%}
+    </div>
+
+        {%endfor%}
+        </div>
+
+
+
+<div class="w3-center w3-padding-6">
+
+    <span class="step-links">
+        {% if mine_restaurant_list.has_previous %}
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page=1">&laquo; first</a>
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{ restaurant1.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            <b>Page {{ mine_restaurant_list.number }} of {{  mine_restaurant_list.paginator.num_pages }}.</b>
+        </span>
+
+        {% if mine_restaurant_list.has_next %}
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{  mine_restaurant_list.next_page_number }}">next</a>
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{ mine_restaurant_list.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+
+
+
+
+
+
+    {%else%}
+    <div class="conatiner-fluid" style="margin-top:120px">
+
+            <br>
+         <h2 id="head1" align="center"><b><u>Some Near by Food Destinations</u></b></h2><br>
+        <div class="jumbotron">
+    <h1 align="center">No Near by food Destinations Available in Your area. </h1>
+            <h2 align="center"> You can Search some other food destinations.</h2>
+            <br> <br> <br> <br> <br>
+            </div>
+        </div>
+
+{%endif%}
+
+    {%endif%}
+
+
+     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<hr id="about">
+
+  <!-- About Section -->
+  <div class="w3-container w3-padding-32 w3-center">
+      <h2 id="head">About Us</u></h2><br>
+    <img src="https://www.w3schools.com/w3images/chef.jpg" alt="Me" class="w3-image" style="display:block;margin:auto" width="800" height="533">
+    <div class="w3-padding-32">
+      <h4><b>Who We Are!</b></h4>
+      <h6><i>With Passion For Real, Good Food</i></h6>
+      <p>Just me, myself and I, exploring the universe of unknownment. I have a heart of love and an interest of lorem ipsum and mauris neque quam blog. I want to share my world with you. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p>
+    </div>
+  </div>
+
+
+<hr id = "contact">
+  <div class="w3-container w3-padding-32 w3-center">
+
+      <h2 id="head">Contact Us</u></h2><br>
+       <h4><b>We are always Waiting for Your Suggestion and Comments </b></h4>
+      <h6><i>Please Fill The Contact Us Form and suggest some improvements or Positive Feedback</i></h6>
+
+      {% if request.user.is_authenticated %}
+
+      <div class="well well-lg">
+ <form id="contact_form"  class="form-horizontal" action="/food/contact/" method="post" enctype="multipart/form-data">
+            {%csrf_token%}
+
+		      <div class="form-group">
+
+			   <h5 align="left"><label for="id_name">Name:</label></h5>
+	 	    <input type="text" name="name" value="{{request.user.first_name}}&nbsp;{{request.user.last_name}}" maxlength="40" id="id_name" required class="form-control" />
+
+		 </div>
+
+     <div class="form-group">
+
+			   <h5 align="left"><label for="phone">Phone:</label></h5>
+
+	 	    <input type="text" name="phone" value="{{request.user.profile.phone}}" maxlength="10" id="phone" required class="form-control" />
+
+		 </div>
+     <div class="form-group">
+
+			   <h5 align="left"><label for="id_email">Email:</label></h5>
+	 	    <input type="email" name="email" value="{{request.user.email}}" maxlength="40" id="id_email" required class="form-control" />
+
+
+
+		 </div>
+     <div class="form-group">
+
+			   <h5 align="left"><label for="id_Comment_and_Suggestion">Comment and Suggestion:</label></h5>
+	 	    <textarea name="Comment_and_Suggestion" cols="40" rows="10" id="id_Comment_and_Suggestion" class="form-control" required maxlength="1000">
+</textarea>
+		 </div>
+    <button onclick="return phoneValid(this);" class="btn btn-success btn-block btn-lg">Submit Your Response</button>
+</form>
+</div>
+
+      {%else%}
+      <br>
+      <h3>You are not Logged in Yet.</h3>
+      <h2><a href="{%url 'accounts:login'%}" class="btn btn-block btn-info">Click here</a></h2>
+
+      {%endif%}
+
+</div>
+
+
+
+
+<style>
+
+
+input[type=text],input[type=email]{
+
+
+    width: 50%;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.7s ease-in-out;
+      border-left:0px;
+     border-right:0px;
+
+}
+
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus{
+width:100%;
+}
+
+.red {
+color:red;
+font-size:25px;
+
+}
+
+#food{
+margin-top:55px;
+padding:20px;
+}
+
+
+.autocomplete {
+  /*the container must be positioned relative:*/
+  position: relative;
+  display: inline-block;
+}
+input {
+  border: 1px solid transparent;
+  background-color: #f1f1f1;
+  padding: 10px;
+  font-size: 16px;
+}
+input[type=text] {
+  background-color: #f1f1f1;
+  width: 100%;
+}
+input[type=submit] {
+  background-color: DodgerBlue;
+  color: #fff;
+  cursor: pointer;
+}
+.autocomplete-items {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-bottom: none;
+  border-top: none;
+  z-index: 99;
+  /*position the autocomplete items to be the same width as the container:*/
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+.autocomplete-items div {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+.autocomplete-items div:hover {
+  /*when hovering an item:*/
+  background-color: #e9e9e9;
+}
+.autocomplete-active {
+  /*when navigating through the items using the arrow keys:*/
+  background-color: DodgerBlue !important;
+  color: #ffffff;
+}
+
+
+</style>
+
+
+<script>
+
+
+    function autocomplete(inp, arr) {
+  /*the autocomplete function takes two arguments,
+  the text field element and an array of possible autocompleted values:*/
+  var currentFocus;
+  /*execute a function when someone writes in the text field:*/
+  inp.addEventListener("input", function(e) {
+      var a, b, i, val = this.value;
+      /*close any already open lists of autocompleted values*/
+      closeAllLists();
+      if (!val) { return false;}
+      currentFocus = -1;
+      /*create a DIV element that will contain the items (values):*/
+      a = document.createElement("DIV");
+      a.setAttribute("id", this.id + "autocomplete-list");
+      a.setAttribute("class", "autocomplete-items");
+      /*append the DIV element as a child of the autocomplete container:*/
+      this.parentNode.appendChild(a);
+      /*for each item in the array...*/
+      for (i = 0; i < arr.length; i++) {
+        /*check if the item starts with the same letters as the text field value:*/
+        if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+          /*create a DIV element for each matching element:*/
+          b = document.createElement("DIV");
+          /*make the matching letters bold:*/
+          b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+          b.innerHTML += arr[i].substr(val.length);
+          /*insert a input field that will hold the current array item's value:*/
+          b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+          /*execute a function when someone clicks on the item value (DIV element):*/
+          b.addEventListener("click", function(e) {
+              /*insert the value for the autocomplete text field:*/
+              inp.value = this.getElementsByTagName("input")[0].value;
+              /*close the list of autocompleted values,
+              (or any other open lists of autocompleted values:*/
+              closeAllLists();
+          });
+          a.appendChild(b);
+        }
+      }
+  });
+  /*execute a function presses a key on the keyboard:*/
+  inp.addEventListener("keydown", function(e) {
+      var x = document.getElementById(this.id + "autocomplete-list");
+      if (x) x = x.getElementsByTagName("div");
+      if (e.keyCode == 40) {
+        /*If the arrow DOWN key is pressed,
+        increase the currentFocus variable:*/
+        currentFocus++;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 38) { //up
+        /*If the arrow UP key is pressed,
+        decrease the currentFocus variable:*/
+        currentFocus--;
+        /*and and make the current item more visible:*/
+        addActive(x);
+      } else if (e.keyCode == 13) {
+        /*If the ENTER key is pressed, prevent the form from being submitted,*/
+        e.preventDefault();
+        if (currentFocus > -1) {
+          /*and simulate a click on the "active" item:*/
+          if (x) x[currentFocus].click();
+        }
+      }
+  });
+  function addActive(x) {
+    /*a function to classify an item as "active":*/
+    if (!x) return false;
+    /*start by removing the "active" class on all items:*/
+    removeActive(x);
+    if (currentFocus >= x.length) currentFocus = 0;
+    if (currentFocus < 0) currentFocus = (x.length - 1);
+    /*add class "autocomplete-active":*/
+    x[currentFocus].classList.add("autocomplete-active");
+  }
+  function removeActive(x) {
+    /*a function to remove the "active" class from all autocomplete items:*/
+    for (var i = 0; i < x.length; i++) {
+      x[i].classList.remove("autocomplete-active");
+    }
+  }
+  function closeAllLists(elmnt) {
+    /*close all autocomplete lists in the document,
+    except the one passed as an argument:*/
+    var x = document.getElementsByClassName("autocomplete-items");
+    for (var i = 0; i < x.length; i++) {
+      if (elmnt != x[i] && elmnt != inp) {
+        x[i].parentNode.removeChild(x[i]);
+      }
+    }
+  }
+  /*execute a function when someone clicks in the document:*/
+  document.addEventListener("click", function (e) {
+      closeAllLists(e.target);
+      });
+}
+
+countries[1];
+
+/*initiate the autocomplete function on the "myInput" element, and pass along the countries array as possible autocomplete values:*/
+autocomplete(document.getElementById("search"), countries);
+
+
+function phoneValid(){
+var phone = document.getElementById("phone")
+if(phone.value.length < 10){
+          alert("phone number must be of 10 digits");
+          return false;
+    }
+else{
+    return true;
+
+}
+
+}
+</script>
+{%endblock%}

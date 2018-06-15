@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Karma">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tangerine">
+      <link href='https://fonts.googleapis.com/css?family=Amita' rel='stylesheet'>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+      <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=places"></script>
+      {%load staticfiles %}
+      <link rel="stylesheet" type="text/css" href="{% static 'food/base.css'%}">
+       <link rel="icon" type="img/ico" href="https://pi360.net/site/images/favicon.ico">
+        <title>
+
+      {% block title%}
+
+      {% endblock %}
+            </title>
+
+<style>
+
+
+ @import url("https://fonts.googleapis.com/css?family=Amatic+SC");
+body,h1,h2,h3,h4,h5,h6 {font-family: "Karma", sans-serif}
+.w3-bar-block .w3-bar-item {padding:20px}
+
+#h{
+  width: 100%;
+  text-align: center;
+  font-family: 'Amatic SC';
+  color: #333;
+  opacity: 1;
+
+  background-color:#FFD454;
+  height:1600px;
+
+  Z-index:99999;
+}
+#t{
+  font-size: 140px;
+ margin-top:100px;
+  Z-index:1;
+ animation:pulse 2.5s linear infinite;
+
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1, 1);
+    opacity: .25;
+  }
+  50% {
+    transform: scale(1.2, 1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1, 1);
+    opacity: .25;
+  }
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #2f2f2f;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+</style>
+    </head>
+
+<body onload="get_rout();">
+
+<div class="navbar navbar-fixed-top" id="h">
+<p id="t" align="center"> Loading in progress..</p>
+    <div align="center">
+        <div class="loader"></div>
+    </div>
+</div>
+
+<!-- Nav bar menu -->
+
+ <nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a id="heading1"  class="navbar-brand" href="{%url 'food:restaurants_list'%}">24x7 HUNGER</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+          <li><a id="menu1" href="#about"  ><span class="glyphicon glyphicon-globe"></span>&nbsp;About</a></li>
+        <li><a id="menu2" href="#contact"><span class="glyphicon glyphicon-envelope"></span> &nbsp;Contact Us</a></li>
+          <li> <a id="menu7" data-toggle="modal" data-target="#myModal">   <span class="glyphicon glyphicon-filter"></span>&nbsp;Filter Search</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          {%if request.user.is_authenticated%}
+          <li><a id="menu3" class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-user"></span>&nbsp;Hello {{request.user.username}}<span class="caret"></span></a>
+
+                <ul class="dropdown-menu">
+                     {%if user.is_superuser or user.is_staff%}
+                    <li><a href="{%url 'ordermanage:order-list'%}"  id="menu5"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;view orders</a></li>
+                        {%endif%}
+                      {%if user.is_superuser %}
+                    <li><a href="/ordermanage/restaurants/orders/"  id="menu5"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;Restaurants Payments</a></li>
+                    {%endif%}
+                    <li><a class="menu1" href="{%url 'accounts:profile'%}"><span class="glyphicon glyphicon-user"></span>&nbsp;Edit My Profile</a></li>
+                     <li><a class="menu1" href="{%url 'accounts:password_change'%}"><span class="glyphicon glyphicon-edit"></span>&nbsp;Change Password</a></li>
+                  <li><a class="menu1" href="{%url 'food:my_orders'%}"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;My Orders</a></li>
+                  <li><a class="menu1" href="{%url 'accounts:logout'%}"><span class="glyphicon glyphicon-log-out"></span>&nbsp;Logout</a></li>
+                </ul></li>
+
+
+          <li><a id="menu4" href="{%url 'food:my_cart'%}"><span class="glyphicon glyphicon-shopping-cart"></span>&nbsp;My Cart<span class="badge"></span> </a></li>
+          {%else%}
+        <li><a id="menu8" href="{%url 'accounts:signup'%}"><span class="glyphicon glyphicon-user"></span>&nbsp;SignUp</a></li>
+        <li><a id="menu6" href="{%url 'accounts:login'%}"><span class="glyphicon glyphicon-log-in"></span>&nbsp;Login</a></li>
+          {%endif%}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+ <!--Filter Modal -->
+
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+            <h2 align="center" class="modal-title" style="color:rgb(255,127,80);"><b>Welcome to 24x7 Advance search</b></h2>
+        </div>
+
+
+        <div class="modal-body">
+            <form method="post" action="/food/restaurants/advanced" enctype="multipart/form-data">
+                {%csrf_token%}
+
+          <h3 align="center">Please Choose Category:</h3>
+            <p><b><u>You are looking for:</u></b></p>
+             <div class="radio">
+              <label><input type="radio" value="fast" name="optradio"  required>Fast Food</label>
+            </div>
+            <div class="radio">
+              <label><input type="radio" value="destination" name="optradio">Destination Restaurant</label>
+            </div>
+            <div class="radio disabled">
+              <label><input type="radio" value="cafe" name="optradio"  >Cafe</label>
+            </div>
+                 <div class="radio disabled">
+              <label><input type="radio" value="street" name="optradio"  >Street Food</label>
+            </div>
+             <div class="radio disabled">
+              <label><input type="radio" value="dhaba" name="optradio" >Dhaba</label>
+            </div>
+
+
+
+             <h3 align="center">Please Choose Area:</h3>
+            <p><b><u>You are looking Food Destination at:</u></b></p>
+
+             <div class="form-group">
+              <label for="sel1">Select Area:</label>
+              <select name="area" class="form-control" id="sel1">
+
+                  <option value="janipur">janipur</option>
+                <option value="disco road">Disco Road</option>
+                <option value="talli morh">Talli Morh</option>
+                  <option value="New Plot">New Plot</option>
+                <option value="amphalla">Amphalla</option>
+                <option value="rehari">Rehari</option>
+            </select>
+             </div>
+                <button class="btn btn-info btn-block">Submit</button>
+                </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+ {%block body%}
+ {%endblock%}
+
+<hr>
+  <footer>
+       <div class="navbar navbar-default">
+           <div class="container-fluid">
+
+       <div class="w3-container w3-padding-32 w3-center">
+
+            <ul class="list-inline social-buttons">
+                        <li><a href="#"><i class="fa fa-twitter"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-facebook"></i></a>
+                        </li>
+                        <li><a href="#"><i class="fa fa-linkedin"></i></a>
+                        </li>
+                    </ul>
+
+    <div class="w3-padding-25">
+
+      <h4><b>Disclaimer</b></h4>
+      <h6><i>The information contained on <b>www.247Hunger.com</b>  is provided for informational purposes
+          only and is not meant  to substitute for the advice provided by your doctor or other healthcare
+          professional. </i></h6>
+
+  </div>
+
+            <div class="row">
+                <hr>
+                <div class="col-md-4">
+                  <span class="copyright">Designed by <b><a href="https://www.facebook.com/settings?tab=account&section=advertising_email">Arun Sharma</a></b> </span>
+                </div>
+                <div class="col-md-2">
+
+                </div>
+                <div class="col-md-8">
+                    <ul class="list-inline quicklinks">
+                        <li><a href="{%url 'accounts:copyright'%}"><b>Copyright Policy</b></a>
+                        </li>
+                        <li><a href="{%url 'accounts:tc'%}"><b>Terms and Conditions</b></a>
+                        </li>
+                        <li><a href="{%url 'accounts:privacy'%}"><b>Privacy Policy</b></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+      </div>
+       </div>
+  </footer>
+
+<script>
+// Script to open and close sidebar
+function w3_open() {
+    document.getElementById("mySidebar").style.display = "block";
+}
+
+function w3_close() {
+    document.getElementById("mySidebar").style.display = "none";
+}
+
+
+$(document).ready(function(){
+  // Add smooth scrolling to all links
+  $("a").on('click', function(event) {
+
+    // Make sure this.hash has a value before overriding default behavior
+    if (this.hash !== "") {
+      // Prevent default anchor click behavior
+      event.preventDefault();
+
+      // Store hash
+      var hash = this.hash;
+
+
+      $('html, body').animate({
+        scrollTop: $(hash).offset().top
+      }, 800, function(){
+
+        // Add hash (#) to URL when done scrolling (default click behavior)
+        window.location.hash = hash;
+      });
+    } // End if
+  });
+});
+
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+jQuery(window).load(function(){
+    jQuery("#h").fadeOut(1000);
+
+        });
+    </script>
+</body>
+</html>

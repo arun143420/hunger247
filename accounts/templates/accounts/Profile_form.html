@@ -1,0 +1,231 @@
+{%extends 'food/base.html'%}
+
+{%block body%}
+
+<br><br><br><br>
+
+		<div class="container">
+	{%if messages%}
+
+        {%for message in messages%}
+    <div align="center" class="alert alert-danger" id="msg">
+        <strong>{{message}}</strong>
+    </div>
+        {%endfor%}
+    {%endif%}
+
+	    <strong id="err"></strong>
+	  {%if form1.errors%}
+	 <div align="center" class="alert alert-danger">
+        <strong>{{ form1.username.errors }}</strong>
+    </div>
+			 
+	{%endif%}
+
+
+				<div class="row">
+
+	<div class="col-sm-4"></div>
+
+	<div class="well well-lg col-sm-4"  style="margin-left:10px;">
+
+				{%if request.user.profile.tc%}
+
+					<h2 id="head"  align="center">
+						Edit Your Profile
+					 </h2><br />
+				{%else%}
+					<h2 id="head"  align="center">
+						Complete Your Profile
+					 </h2><br />
+
+				{%endif%}
+
+				<form   class="form-horizontal" action="" method="post" enctype="multipart/form-data">
+					  {% csrf_token %}
+					 <div class="form-group">
+							 {{form1.username.label_tag}}
+							{{form1.username}}
+
+						 </div>
+
+					 <div class="form-group">
+							 {{form1.email.label_tag}}
+							{{form1.email}}
+
+						 </div>
+					 <div class="form-group">
+							 {{form1.first_name.label_tag}}
+							{{form1.first_name}}
+
+						 </div>
+
+					 <div class="form-group">
+							 {{form1.last_name.label_tag}}
+							{{form1.last_name}}
+
+						 </div>
+
+
+
+
+
+						 <div class="form-group">
+							 {{form.area.label_tag}}
+							{{form.area}}
+
+						 </div>
+
+					 <div class="form-group">
+							 {{form.address.label_tag}}
+							{{form.address}}
+
+						 </div>
+
+
+					 <div class="form-group">
+							 {{form.phone.label_tag}}
+							{{form.phone}}
+
+						 </div>
+
+
+					 <div class="form-group">
+							 {{form.pincode.label_tag}}
+							{{form.pincode}}
+
+						  <input type="hidden" name="latitude" step="any" required id="id_latitude" />
+						  <input type="hidden" name="longitude" step="any" required id="id_longitude" />
+
+
+						 </div>
+
+
+					 <div class="form-group">
+							 {{form.land_mark.label_tag}}
+							{{form.land_mark}}
+
+						 </div>
+
+
+					 <div class="checkbox">
+
+						 &nbsp; &nbsp; &nbsp;{{form.tc}} You are agree with all the <b><a>Terms and Conditions</a></b>
+
+						 </div>
+
+					<br>
+					<br>
+					<button onclick="return phoneValid(this);" class="btn btn-success btn-block btn-md">Submit</button>
+				</form>
+
+	</div>
+	<div class="col-sm-4"></div>
+
+			</div>
+			<div class="row">
+				<div class="panel panel-warning">
+                <div align="center" class="panel-heading">
+
+					<p><b>NOTE: </b>If you are not able to submit this form It is because your browser doesn't support geoLocation</p>
+				<p>You Need to try from some another Browser.</p>
+                </div>
+
+			</div>
+
+		</div>
+
+
+<style>
+input[type=text],input[type=email],input[type=password],select{
+
+    width: 290px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: white;
+    background-image: url('searchicon.png');
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 12px 20px 12px 40px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+       border-left:0px;
+     border-right:0px;
+}
+
+input[type=text]:focus,input[type=email]:focus,input[type=password]:focus,select:focus{
+width:100%;
+}
+</style>
+<script>
+
+var x = document.getElementById("head");
+function getLocation() {
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition,showError);
+    } else {
+        x.innerHTML = "Geolocation is not supported by this browser.";
+    }
+}
+
+function showPosition(position) {
+	 document.getElementById("id_latitude").setAttribute('value',position.coords.latitude);
+  	document.getElementById("id_longitude").setAttribute('value',position.coords.longitude);
+
+
+}
+
+function showError(error) {
+
+var x = document.getElementById("err");
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            x.innerHTML = "User denied the request for Geolocation."
+            break;
+        case error.POSITION_UNAVAILABLE:
+            x.innerHTML = "Location information is unavailable."
+            break;
+        case error.TIMEOUT:
+            x.innerHTML = "The request to get user location timed out."
+            break;
+        case error.UNKNOWN_ERROR:
+            x.innerHTML = "An unknown error occurred."
+            break;
+    }
+}
+
+
+function phoneValid(){
+var phone = document.getElementById("phone")
+var pin = document.getElementById("id_pincode")
+
+if(phone.value.length < 10){
+          alert("phone number must be of 10 digits");
+          phone.focus();
+          return false;
+    }
+
+
+else if (pin.value.length <6){
+   alert("pincode  must be of 6 digits long.");
+          pin.focus();
+          return false;
+
+	}
+
+else{
+    return true;
+
+}
+
+}
+
+$(window).load(function() {
+ getLocation();
+});
+
+</script>
+{%endblock%}

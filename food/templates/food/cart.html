@@ -1,0 +1,306 @@
+{%extends 'food/base.html'%}
+{%block body%}
+
+
+<div class="container" style="margin-top:70px;">
+
+{%if cart_list%}
+    <div class="row">
+        <div class="col-sm-8">
+    {%if messages%}
+
+        {%for message in messages%}
+    <div align="center" class="alert alert-danger">
+        <strong>{{message}}</strong>
+    </div>
+        {%endfor%}
+    {%endif%}
+
+
+            <div class="well well-lg row">
+                <div class="col-sm-9">
+              <h2 id="head" align="center"> My Cart</h2>
+                    </div>
+                <div class="col-sm-3">
+                     <p></p>
+                        <form action="/food/clear/cart/" method="post">
+                            {%csrf_token%}
+                        <button onclick="return CheckCart(this);" class="btn btn-danger btn-block"><span class="glyphicon glyphicon-trash"></span> Clear My Cart</button>
+                        </form>
+
+                </div>
+                </div>
+<script>
+       var count=0;
+
+</script>
+  <table class="table table-hover">
+      <thead>
+      <tr>
+       <th>S. NO.</th>
+      <th>Item </th>
+      <th>Ordered from</th>
+      <th>Quantity</th>
+      <th>Price</th>
+          <th>Remove</th>
+      </tr>
+      </thead>
+    <tbody>
+	
+	 <script>
+                var i=0;
+                var j;
+                var cost = new Array({{cart_count}});
+                var adder = 0;
+                </script>
+
+            {%for cart in cart_list%}
+
+            <script>
+               cost[i] = {{cart.etc_price}}
+               i++;
+               </script>
+            {%endfor%}
+
+            <script>
+          var noDupe = Array.from(new Set(cost))
+          var l = noDupe.length;
+          for(j=0;j<l;j++){
+          adder = adder+noDupe[j];
+            }
+ </script>
+
+    {%for cart in cart_list%}
+    <tr>
+        <td>{{forloop.counter }}</td>
+        <td>{{cart.item.name}}</td>
+        <td>{{cart.item.restaurant}}</td>
+        <td>{{cart.item.quantity}}</td>
+        <td>{{cart.item.price}}</td>
+        <td><a href="/food/cart/{{cart.id}}/delete"><span class="glyphicon glyphicon-trash"></span></a> </td>
+
+        <script>
+    var item = {{cart.item.price}};
+    count = count+item;
+
+
+</script>
+
+    </tr>
+    {%endfor%}
+    <tr>
+        <td></td>
+        <td></td>
+        <td>
+           </td>
+        <td>
+        </td>
+        <td><b><i> Total:-&nbsp;<span class="fa fa-inr"></span></i>
+      <script>
+
+	  document.write(count);
+
+    </script><br></b>
+            <b><i> Delivery charges:-&nbsp;<span class="fa fa-inr"></span> </i>
+      <script>
+
+	  document.write(adder);
+
+    </script><br></b>
+            <b><i> Sub Total:-&nbsp;<span class="fa fa-inr"></span></i>
+      <script>
+      var done  = count+adder;
+	  document.write(adder+count);
+
+    </script></b>
+
+
+
+        </td>
+        <td></td>
+    </tr>
+
+    </tbody>
+  </table>
+
+
+
+<p>Etc Charges <b>Rs <script>document.write(adder);</script> </b>are included in to your Total Amount.</p>
+
+           
+
+
+
+
+
+
+
+
+
+        </div>
+        <div class="col-sm-4">
+
+
+ <div class="panel panel-default">
+                <div class="panel-heading"><h2 id="head1" align="center">Payment</h2></div>
+            <div class="panel-body">
+
+            {%if request.user.profile.tc%}
+
+<table class="table">
+    <tbody>
+
+     <form method="post" action="/food/order/confirm/" id="cart_form">
+
+              <b><strong>Choose:</strong></b>
+               <select name="payment" form="cart_form">
+             <option value="COD">COD</option>
+                <option value="Paytm">Paytm</option>
+                <option value="credit/debit">Credit/Debit</option>
+            </select>
+                     {%csrf_token%}
+
+            <input type="hidden" name="order" id="id_order_no"><br>
+               <input type="hidden" name="total_amount" id="id_total_amount"><br>
+            <input type="hidden" name="etc_amount" id="id_etc_amount"><br>
+             <input type="hidden" name="sub_total_amount" id="id_sub_total_amount"><br>
+         <button class="btn btn-block  btn-md  btn-info ">Order now</button>
+
+                 </form>
+
+
+             <form method="get" action="{%url 'food:restaurants_list'%}">
+    {%csrf_token%}
+
+    <button class="btn btn-block btn-md btn-danger">Back</button>
+
+        </form>
+
+
+</tbody>
+</table>
+
+
+
+                 <div class="panel panel-default">
+                <div class="panel-heading"><h4 id="head1" align="center">Delivery Address</h4></div>
+            <div class="panel-body">
+                <table>
+                    <tbody>
+                      <tr>
+                        <td><b>Name:&nbsp;</b>{{request.user.first_name}}&nbsp;{{cnf_order.user.last_name}}</td>
+
+                    </tr>
+                    <tr>
+                        <td><b>Address&nbsp;</b>{{request.user.profile.address}}</td>
+
+                    </tr>
+                    <tr>
+                        <td><b>Contact No.: &nbsp;</b>{{request.user.profile.phone}}</td>
+
+                    </tr>
+                     <tr>
+                        <td><b>Pincode:&nbsp;</b>{{request.user.profile.pincode}}</td>
+
+                    </tr>
+                     <tr>
+                        <td><b>Landmark:&nbsp;</b>{{request.user.profile.land_mark}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+                  <div class="panel-footer">
+                       <form action="/accounts/signup/profile/" method="get">
+                            {%csrf_token%}
+                        <button class="btn btn-block btn-info"><span class="glyphicon glyphicon-cog"></span> Change My Address</button>
+                        </form>
+                  </div>
+          </div>
+
+                {%else%}
+
+                <div align="center">
+                  <h2 align="center"><a  href="{%url 'accounts:profile'%}" style="display:inline" class="btn btn-info btn-block btn-lg">
+             Add Delivery Address
+            </a></h2>
+                    </div>
+                <br><br>
+
+
+          {%endif%}
+            </div>
+ </div>
+
+
+
+
+
+
+        </div>
+
+             {%else%}
+
+        <div class="row">
+        <div class=" col-sm-12">
+             <div class="jumbotron">
+                 <h2 align="center">Your <b>Cart <span class="glyphicon glyphicon-shopping-cart"></span></b> is empty. </h2>
+        <h3 align="center">Lets&nbsp;<b><a href="{%url 'food:restaurants_list'%}" ><b>Add&nbsp;<span class="glyphicon glyphicon-plus-sign"></span></b></a></b> some Items</h3>
+                 </div>
+
+            </div>
+            </div>
+
+
+{%endif%}
+
+    </div>
+</div>
+
+
+
+
+<style>
+    select{
+    width:100%;
+    height:30px;
+    border-radius:10px;
+    }
+</style>
+
+
+
+<script>
+
+
+var x = Math.floor((Math.random() * 1000000) + 1);
+
+document.getElementById("id_order_no").setAttribute('value',x);
+
+document.getElementById("id_total_amount").setAttribute('value',count);
+
+document.getElementById("id_etc_amount").setAttribute('value',adder);
+
+document.getElementById("id_sub_total_amount").setAttribute('value',done);
+
+
+
+
+ 
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover(); 
+});
+ 
+
+
+function CheckCart(){
+
+ var txt;
+    if (confirm("You really want to clear the Cart?")) {
+        return true;
+    } else {
+       return false;
+    }
+};
+</script>
+{%endblock%}

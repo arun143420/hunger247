@@ -1,0 +1,146 @@
+ {%extends 'food/base.html'%}
+{%block body%}
+
+
+<div class="container" style="margin-top:100px;">
+      {%if list%}
+    <div class="row">
+        <div class="col-sm-12" id="order-list-body">
+     <h2 align="center" id="head"><b>All Orders Of <u>{{rest_name}}</u></b></h2><br>
+
+            <div class="row">
+
+                    <form class="form-inline" action="/ordermanage/restaurants/orders/" method="post" >
+                       {%csrf_token%}
+                       <div class="col-sm-5 form-group">
+                           <label>Restaurant Name:</label>
+            <input style="width:100%;"  name="restaurant" class="form-control" id="myInput" type="text" value="{{rest_name}}" required  >
+                       </div>
+                       <div class=" col-sm-3 form-group">
+                           <label>Select Month:</label>
+                  <select name="month" class="form-control" style="width:100%;"  >
+                     <option value="1">January</option>
+                        <option value="2">February</option>
+                        <option value="3">March</option>
+                        <option value="4">April</option>
+                        <option value="5">May</option>
+                        <option value="6">June</option>
+                        <option value="7">July</option>
+                        <option value="8">August</option>
+                        <option value="9">September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+            </select>
+                       </div>
+                       <div class=" col-sm-3 form-group" >
+                           <label >Select Year:</label>
+                         <select name="year" class="form-control" style="width:100%;"  >
+                        <option value="2018">2018</option>
+                        <option value="2019">2019</option>
+                        <option value="2020">2020</option>
+            </select>
+                       </div>
+                         <div class=" col-sm-1" >
+                             <label>&nbsp;</label>
+                       <button  class="btn btn-info btn-md btn-block">Go</button>
+                         </div>
+                </form>
+                 </div>
+<br>
+                    <a href="/ordermanage/restaurants/orders/" class="btn btn-danger btn-block">Back To All Restaurants</a>
+
+<br>
+            <div id="order-body">
+
+
+                <script>
+
+                   var count=0;
+                </script>
+
+               <table class="table table-stripe" id="myTable" style="width:100%;">
+                 <thead>
+
+                 <tr>
+                     <th>S.No.</th>
+
+                       <th>Ordered By</th>
+                     <th>Ordered From</th>
+                          <th>Order Id</th>
+                     <th>Item</th>
+                        <th>Order Time</th>
+                        <th>Amount</th>
+
+                 </tr>
+                    </thead>
+
+        <tbody id="order_list">
+
+    {%for order in list%}
+        <tr id="orders">
+
+        {%if order.item.restaurant.name == rest_name%}
+            <td>{{forloop.counter}}</td>
+             <td>{{order.cartmanager.user.first_name}}&nbsp;{{order.cartmanager.user.last_name}}</td>
+                 <td> {{order.item.restaurant.name}}</td>
+                <td>{{order.cartmanager.order_id}}</td>
+             <td>{{order.item.name}}</td>
+            <td>{{order.cartmanager.delivery_time }}</td>
+             <td class="price">{{order.item.price}}</td>
+            <script>
+                count = count+{{order.item.price}};
+
+            </script>
+            {%endif%}
+        </tr>
+            {%endfor%}
+        </tbody>
+
+               </table>
+
+               <h2 align="right" style="margin-right:40px;">Total:-&nbsp;<span class="fa fa-inr"></span>
+
+            <script>
+                document.write(count);
+            </script>
+                      </h2>
+            </div>
+
+        </div>
+    </div>
+    {%else%}
+    <div class="row">
+        <div class=" jumbotron col-sm-12">
+                   <h2 align="center">No Results Found.</h2>
+            <h3 align="center"><a  href="/ordermanage/restaurants/orders/"><b>Try again</b></a> with Different KeyWords</h3>
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+    {%endif%}
+
+</div>
+
+<style>
+
+
+
+</style>
+
+<script>
+
+
+
+
+
+
+
+</script>
+<br><br>
+{%endblock%}

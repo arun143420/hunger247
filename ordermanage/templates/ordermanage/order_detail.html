@@ -1,0 +1,158 @@
+{%extends 'food/base.html'%}
+{%block body%}
+
+
+<div class="container" style="margin-top:100px;">
+
+    <div class="row">
+        <div class="col-sm-8" id="order-list-body">
+    {%if messages%}
+
+        {%for message in messages%}
+    <div align="center" class="alert alert-danger">
+        <strong>{{message}}</strong>
+    </div>
+        {%endfor%}
+    {%endif%}
+           <h2 align="center"><b id="head">Order Number:</b>{{order.order_id}}</h2><br><br>
+
+             <table class="table table-stripe" id="myTable" style="width:100%;">
+                 <thead>
+                 <tr>
+                     <th>S.No.</th>
+                       <th>Item</th>
+                        <th>Ordered From</th>
+                        <th>Amount</th>
+                     <th></th>
+                 </tr>
+                    </thead>
+                 <tbody>
+
+
+
+                  <script>
+                var i=0;
+                var j;
+                var cost = new Array({{cart_count}});
+                var adder = 0;
+                </script>
+
+            {%for cart in order.ordersdone_set.all%}
+
+            <script>
+               cost[i] = {{cart.etc_price}}
+               i++;
+               </script>
+            {%endfor%}
+
+            <script>
+          var noDupe = Array.from(new Set(cost))
+          var l = noDupe.length;
+          for(j=0;j<l;j++){
+          adder = adder+noDupe[j];
+            }
+ </script>
+
+                 <script>
+                     var count = 0;
+                 </script>
+            {%for order in order.ordersdone_set.all%}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{order.item.name}}</td>
+                <td>{{order.item.restaurant}}</td>
+                <td>{{order.item.price}}</td>
+            </tr>
+                    <script>
+                        var item = {{order.item.price}};
+                        count = count+item;
+
+                    </script>
+
+
+              {%endfor%}
+                    </tbody>
+             </table>
+
+
+                        <b>Total:&nbsp;<span class="fa fa-inr"></span></b><script>
+                        document.write(count);
+
+
+                        </script><br>
+
+
+                         <b>Etc Charges:&nbsp;<span class="fa fa-inr"></span></b><script>
+                        document.write(adder);
+
+
+                        </script><br>
+                       <b>Sub Total:&nbsp;<span class="fa fa-inr"></span></b><script>
+                        document.write(count+adder);
+
+
+                        </script>
+
+
+            <div class="row">
+                <div class="col-sm-5">
+            <form action="/ordermanage/orders/{{order.id}}/confirm/" method="post">
+                {%csrf_token%}
+                <input type="hidden" name="status" value="true">
+            <button class="btn btn-block btn-info" value="Confirm">Confirm</button>
+                </form>
+                </div>
+                 <div class="col-sm-5">
+                   <form action="/ordermanage/orders/{{order.id}}/confirm/" method="post">
+                {%csrf_token%}
+                           <input type="hidden" name="status" value="false">
+            <button class="btn btn-block btn-danger" value="Confirm">Cancel</button>
+                </form>
+                 </div>
+                </div>
+        </div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4">
+            <br><br><br><br>
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3>Delivery Address</h3></div>
+            <div class="panel-body">
+                <table>
+                    <tbody>
+                      <tr>
+                        <td><b>Name:&nbsp;</b>{{order.user.first_name}}&nbsp;{{order.user.last_name}}</td>
+
+                    </tr>
+                    <tr>
+                        <td><b>Address&nbsp;</b>{{order.user.profile.address}}</td>
+
+                    </tr>
+                    <tr>
+                        <td><b>Contact No.: &nbsp;</b>{{order.user.profile.phone}}</td>
+
+                    </tr>
+                     <tr>
+                        <td><b>Pincode:&nbsp;</b>{{order.user.profile.pincode}}</td>
+
+                    </tr>
+                     <tr>
+                        <td><b>Landmark:&nbsp;</b>{{order.user.profile.land_mark}}</td>
+
+                    </tr>
+                     <tr>
+                        <td><b>Payment:&nbsp;</b>{{order.payment}}</td>
+
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            </div>
+            </div>
+
+          </div>
+
+        </div>
+<br><br><br><br>
+{%endblock%}
+
+

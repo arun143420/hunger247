@@ -1,0 +1,153 @@
+{%extends 'food/base.html'%}
+
+
+{%block body%}
+
+
+{% if request.user.is_authenticated %}
+
+
+ {% if mine_restaurant_list %}
+<br><br>
+
+     <div  class="container" id="food1">
+         <br>
+
+
+         <div class="well well-md row"  >
+            <div class="col-sm-6">
+         <h2 id="head1" align="center"><b><u>Food Destinations of your search Near You</u></b></h2>
+            </div>
+           <div class="col-sm-6">
+          <form class="example"  method="post" action="{% url 'food:my_restaurant_list'%}">
+        {%csrf_token%}
+      <input id="search" type="text" value="{{page}}" name="search" placeholder="Search..restaurants near you">
+          <button class="btn btn-lg btn-info" value="q"><span class="glyphicon glyphicon-search"></span> </button>
+    </form>
+           </div>
+         </div>
+
+
+
+   <div  class="w3-row-padding w3-padding-16 w3-center">
+        {% for restaurant1 in mine_restaurant_list%}
+         <div class="w3-quarter">
+        <a href="/food/restaurants/{{restaurant1.id}}"> <img id="rest-img" src="{{restaurant1.logo.url}} " alt="Sandwich" ></a>
+        <a href="/food/restaurants/{{restaurant1.id}}"><h2>{{restaurant1.name}}</h2></a>
+      <p>{{restaurant1.address}} </p>
+        {%if restaurant1.rating == 5%}
+
+        <p>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+
+        </p>
+
+        {% elif restaurant1.rating == 4 %}
+         <p>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+             <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+
+         </p>
+
+           {% elif restaurant1.rating == 3 %}
+
+        <p>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+            <span  class=" red glyphicon glyphicon-heart"></span>
+        </p>
+
+
+        {% elif restaurant1.rating == 2 %}
+            <p>
+                <span  class=" red glyphicon glyphicon-heart"></span>
+                <span  class=" red glyphicon glyphicon-heart"></span>
+            </p>
+
+        {% elif restaurant1.rating == 1 %}
+        <p>
+        <span class="red glyphicon glyphicon-heart"></span>
+        </p>
+
+        {%endif%}
+    </div>
+
+        {%endfor%}
+</div>
+        </div>
+
+
+<div class="w3-center w3-padding-6">
+
+    <span class="step-links">
+        {% if mine_restaurant_list.has_previous %}
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page=1">&laquo; first</a>
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{ restaurant1.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            <b>Page {{ mine_restaurant_list.number }} of {{  mine_restaurant_list.paginator.num_pages }}.</b>
+        </span>
+
+        {% if mine_restaurant_list.has_next %}
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{  mine_restaurant_list.next_page_number }}">next</a>
+            <a class="w3-bar-item w3-button w3-hover-black" href="?page={{ mine_restaurant_list.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+<br><br>
+
+
+
+
+
+
+
+    {%else%}
+    <div class="conatiner-fluid" style="margin-top:60px">
+
+            <br>
+        <div   class="row">
+
+            <div class="col-sm-12" align="center">
+           <h2  id="head1" align="center"><b><u>Food Destinations of your search Near You</u></b></h2><br><br>
+
+          <form class="example"  method="post" action="{% url 'food:my_restaurant_list'%}">
+        {%csrf_token%}
+      <input id="search" type="text" value="{{page}}" name="search" placeholder="Search..restaurants near you">
+          <button class="btn btn-lg btn-info" value="q"><span class="glyphicon glyphicon-search"></span> </button>
+            </form>
+                </div>
+
+             </div>
+         <br>
+
+        <div class="jumbotron">
+    <h1 align="center">No Near by food Destinations found. </h1>
+            <h2 align="center"> please <u><b> Try again</b></u> with different Keywords</h2>
+            <br> <br> <br> <br> <br>
+            </div>
+        </div>
+<br><br>
+    {%endif%}
+
+{%endif%}
+
+{%endblock%}
+
+
+
+
+
+
+
+
+
+
+
